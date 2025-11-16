@@ -30,11 +30,15 @@ public class LinuxUtilPW extends JFrame{
     private JTextField btMacField;
     private JLabel btMacLabel;
     private JLabel btConnectStatus;
+    private JButton obsOffButton;
+    private JButton obsOnButton;
+    private JLabel obsLabel;
+    private JLabel obsStatus;
 
     Color uiGreen = new Color(0, 137, 50);
     Color uiRed = new Color(223, 21, 45);
 
-    static String version = "1.3";
+    static String version = "1.4";
     String sudoPass = "";
     String internetConnection = "";
     String wgConfig = "";
@@ -171,6 +175,53 @@ public class LinuxUtilPW extends JFrame{
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        // initial virtual camera status check
+        if (OBS.virialCamStatus()) {
+            obsStatus.setText("UP");
+            obsStatus.setForeground(uiGreen);
+        } else {
+            obsStatus.setText("DOWN");
+            obsStatus.setForeground(uiRed);
+        }
+
+        obsOnButton.addActionListener(e -> {
+            sudoPass = sudoPassField.getText();
+
+            try {
+                OBS.enableVirtualCamDevice(sudoPass);
+                if (OBS.virialCamStatus()) {
+                    obsStatus.setText("UP");
+                    obsStatus.setForeground(uiGreen);
+                } else {
+                    obsStatus.setText("DOWN");
+                    obsStatus.setForeground(uiRed);
+                }
+            } catch (Exception ex) {
+                obsStatus.setText("FAILED (pass?)");
+                obsStatus.setForeground(uiRed);
+                throw new RuntimeException(ex);
+            }
+        });
+
+        obsOffButton.addActionListener(e -> {
+            sudoPass = sudoPassField.getText();
+
+            try {
+                OBS.disableVirtualCamera(sudoPass);
+                if (OBS.virialCamStatus()) {
+                    obsStatus.setText("UP");
+                    obsStatus.setForeground(uiGreen);
+                } else {
+                    obsStatus.setText("DOWN");
+                    obsStatus.setForeground(uiRed);
+                }
+            } catch (Exception ex) {
+                obsStatus.setText("FAILED (pass?)");
+                obsStatus.setForeground(uiRed);
                 throw new RuntimeException(ex);
             }
         });

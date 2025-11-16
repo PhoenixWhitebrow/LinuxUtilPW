@@ -332,13 +332,41 @@
         </constraints>
         <properties/>
       </component>
-      <component id="302d7" class="javax.swing.JLabel">
+      <component id="302d7" class="javax.swing.JLabel" binding="obsLabel">
         <constraints>
-          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="Label"/>
+          <font style="1"/>
+          <text value="OBS Virtual Cam"/>
+        </properties>
+      </component>
+      <component id="374d3" class="javax.swing.JButton" binding="obsOffButton">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="OFF"/>
+        </properties>
+      </component>
+      <component id="15807" class="javax.swing.JButton" binding="obsOnButton">
+        <constraints>
+          <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="ON"/>
+        </properties>
+      </component>
+      <component id="46ec4" class="javax.swing.JLabel" binding="obsStatus">
+        <constraints>
+          <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="      "/>
         </properties>
       </component>
     </children>
