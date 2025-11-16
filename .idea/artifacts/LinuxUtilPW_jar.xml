@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="LinuxUtilPW:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/LinuxUtilPW_jar</output-path>
+    <root id="archive" name="LinuxUtilPW.jar">
+      <element id="module-output" name="LinuxUtilPW" />
+    </root>
+  </artifact>
+</component>
