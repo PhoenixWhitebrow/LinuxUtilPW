@@ -120,12 +120,18 @@ public class BashScript {
             StringBuilder output = new StringBuilder();
             while ((line = reader.readLine()) != null) {
                 output.append(line).append("\n");
-                System.out.println("Authentication failed: Wrong password detected.");
+                if (output.toString().contains(grep)) {
+                    System.out.println("Expected value found. Process Output:\n" + output.toString());
+                    return true;
+                } else {
+                    // log output
+                    System.out.println("Expected value not found. Process Output:\n" + output.toString());
+                    return false;
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return false;
     }
 
