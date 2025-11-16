@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class LinuxUtilPW extends JFrame{
     private JPanel mainPanel;
@@ -24,11 +25,16 @@ public class LinuxUtilPW extends JFrame{
     private JButton secondMonOffButton;
     private JLabel resolutionLabel;
     private JLabel secondMonStatus;
+    private JButton btConnectButton;
+    private JLabel btConnectLabel;
+    private JTextField btMacField;
+    private JLabel btMacLabel;
+    private JLabel btConnectStatus;
 
     Color uiGreen = new Color(0, 137, 50);
     Color uiRed = new Color(223, 21, 45);
 
-    static String version = "1.2";
+    static String version = "1.3";
     String sudoPass = "";
     String internetConnection = "";
     String wgConfig = "";
@@ -36,6 +42,7 @@ public class LinuxUtilPW extends JFrame{
     String mon2out = "";
     String mon1res = "";
     String mon2res = "";
+    String btMac = "";
 
 
     public LinuxUtilPW(String title) throws Exception {
@@ -60,7 +67,7 @@ public class LinuxUtilPW extends JFrame{
         }
 
         wgUpButton.addActionListener(e -> {
-            // retreiving data from forms
+            // retrieving data from forms
             wgConfig = wgConfigField.getText();
             sudoPass = sudoPassField.getText();
 
@@ -81,7 +88,7 @@ public class LinuxUtilPW extends JFrame{
         });
 
         wgDownButton.addActionListener(e -> {
-            // retreiving data from forms
+            // retrieving data from forms
             wgConfig = wgConfigField.getText();
             internetConnection = "'" + wgInternetconnectionField.getText() + "'";
             sudoPass = sudoPassField.getText();
@@ -110,7 +117,7 @@ public class LinuxUtilPW extends JFrame{
         }
 
         secondMonOnButton.addActionListener(e -> {
-            // retreiving data from forms
+            // retrieving data from forms
             mon1out = firstMonOutField.getText();
             mon2out = secMonOutField.getText();
             mon2res = secMonResField.getText();
@@ -130,7 +137,7 @@ public class LinuxUtilPW extends JFrame{
         });
 
         secondMonOffButton.addActionListener(e -> {
-            // retreiving data from forms
+            // retrieving data from forms
             mon1out = firstMonOutField.getText();
             mon2out = secMonOutField.getText();
             mon1res = firstMonResField.getText();
@@ -145,6 +152,25 @@ public class LinuxUtilPW extends JFrame{
                     secondMonStatus.setForeground(uiRed);
                 }
             } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        btConnectButton.addActionListener(e -> {
+            // retrieving data from forms
+            btMac = btMacField.getText();
+
+            try {
+                if (Bluetooth.connectBtDevice(btMac) == true) {
+                    btConnectStatus.setText("OK");
+                    btConnectStatus.setForeground(uiGreen);
+                } else {
+                    btConnectStatus.setText("FAIL");
+                    btConnectStatus.setForeground(uiRed);
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            } catch (InterruptedException ex) {
                 throw new RuntimeException(ex);
             }
         });

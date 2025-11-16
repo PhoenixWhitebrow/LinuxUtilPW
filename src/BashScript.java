@@ -1,4 +1,7 @@
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.concurrent.TimeUnit;
 
 public class BashScript {
 
@@ -27,6 +30,7 @@ public class BashScript {
         ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", sCom);
         pb.redirectErrorStream(true);
 
+        // initiate script execution
         Process process  = pb.start();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
@@ -81,12 +85,12 @@ public class BashScript {
                     throw new Exception("Authentication failed! Aborting.");
                 }
                 else if (output.toString().contains(grep)) {
-                    System.out.println("Process Output (found it!):\n" + output.toString());
+                    System.out.println("Expected value found. Process Output:\n" + output.toString());
                     return true;
                 }
             }
             // log output
-            System.out.println("Process Output (not found):\n" + output.toString());
+            System.out.println("Expected value not found. Process Output:\n" + output.toString());
 
             process.waitFor();
         } catch (IOException | InterruptedException e) {
@@ -104,36 +108,64 @@ public class BashScript {
         ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", pCom);
         pb.redirectErrorStream(true);
 
+        // initiate script execution
         Process process  = pb.start();
 
+        // read the output
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             pb.inheritIO();
 
-            // detect grep out
+            // log output
             String line;
             StringBuilder output = new StringBuilder();
             while ((line = reader.readLine()) != null) {
                 output.append(line).append("\n");
-                if (output.toString().contains("Sorry, try again.")) {
-                    // log error
-                    System.out.println("Authentication failed: Wrong password detected.");
-                    // stop executing
-                    process.destroy();
-                    throw new Exception("Authentication failed! Aborting.");
-                }
-                else if (output.toString().contains(grep)) {
-                    System.out.println("Process Output (found it!):\n" + output.toString());
-                    return true;
-                }
+                System.out.println("Authentication failed: Wrong password detected.");
             }
-            // log output
-            System.out.println("Process Output (not found):\n" + output.toString());
-
-            process.waitFor();
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
         return false;
+    }
+
+    public static boolean executeExpectScript(String script, String arg) throws IOException, InterruptedException {
+        InputStream in = BashScript.class.getClassLoader().getResourceAsStream(script);
+        File tempScript = File.createTempFile("expect_script_", ".exp");
+        Files.copy(in, tempScript.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        tempScript.setExecutable(true); // Make the script executable
+        in.close();
+
+        ProcessBuilder pb = new ProcessBuilder("/usr/bin/expect", tempScript.getAbsolutePath(), arg); // Add any required arguments
+
+        // initiate script execution
+        Process p = pb.start();
+
+        boolean result = false;
+
+        // read the output
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+            result = p.waitFor(5, TimeUnit.SECONDS); // Wait 5 seconds for the process to finish
+
+            pb.inheritIO();
+            
+            String line;
+            StringBuilder output = new StringBuilder();
+
+            long timeout = System.currentTimeMillis() + 2; // Wait 2 seconds to write logs
+            while ((line = reader.readLine()) != null && System.currentTimeMillis() < timeout) {
+                output.append(line).append("\n");
+            }
+            // log output
+            System.out.println("Process Output:\n" + output.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Script exited normally: " + result);
+
+        tempScript.delete(); // Clean up the temporary file
+
+        return result;
     }
 }

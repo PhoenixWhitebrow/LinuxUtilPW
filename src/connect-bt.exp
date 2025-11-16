@@ -1,0 +1,18 @@
+#/usr/bin/expect
+
+set MAC [lindex $argv 0]
+set prompt ">"
+set timeout -1
+
+spawn bluetoothctl
+
+expect -re $prompt
+
+expect -re $prompt
+send "connect $MAC\r"
+expect -re "Connection successful"
+
+expect -re $prompt
+send "quit\r"
+
+expect eof
