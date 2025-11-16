@@ -46,7 +46,7 @@ public class LinuxUtilPW extends JFrame{
         this.setContentPane(mainPanel);
         this.pack();
 
-        // Замена стандартной иконки
+        // default icon replacement
         Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("icon.png"));
         this.setIconImage(image);
 
@@ -60,7 +60,7 @@ public class LinuxUtilPW extends JFrame{
         }
 
         wgUpButton.addActionListener(e -> {
-            // Получение данных из форм
+            // retreiving data from forms
             wgConfig = wgConfigField.getText();
             sudoPass = sudoPassField.getText();
 
@@ -81,7 +81,7 @@ public class LinuxUtilPW extends JFrame{
         });
 
         wgDownButton.addActionListener(e -> {
-            // Получение данных из форм
+            // retreiving data from forms
             wgConfig = wgConfigField.getText();
             internetConnection = "'" + wgInternetconnectionField.getText() + "'";
             sudoPass = sudoPassField.getText();
@@ -110,7 +110,7 @@ public class LinuxUtilPW extends JFrame{
         }
 
         secondMonOnButton.addActionListener(e -> {
-            // Получение данных из форм
+            // retreiving data from forms
             mon1out = firstMonOutField.getText();
             mon2out = secMonOutField.getText();
             mon2res = secMonResField.getText();
@@ -130,7 +130,7 @@ public class LinuxUtilPW extends JFrame{
         });
 
         secondMonOffButton.addActionListener(e -> {
-            // Получение данных из форм
+            // retreiving data from forms
             mon1out = firstMonOutField.getText();
             mon2out = secMonOutField.getText();
             mon1res = firstMonResField.getText();
