@@ -15,4 +15,11 @@ public class SecondMonitor extends BashScript{
         executeCommand(mon2down);
         executeCommand(mon1restore);
     }
+
+    public static Boolean secondMonitorStatus(String mon2out, String mon2res) throws Exception {
+        BashCommand mon2stat = new BashCommand("xrandr");
+        String grep = String.format("%s connected %s", mon2out, mon2res);
+
+        return executeGrepCommand(mon2stat, grep);
+    }
 }

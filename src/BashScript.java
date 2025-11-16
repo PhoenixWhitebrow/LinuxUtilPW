@@ -58,7 +58,7 @@ public class BashScript {
         String com = String.format("%s %s %s %s %s %s ", command.getCom(),
                 command.getArg(1), command.getArg(2), command.getArg(3), command.getArg(4), command.getArg(5));
         String sCom = String.format("PASWD='%s' && echo $PASWD | sudo -S %s", sudoPass, com);;
-        String pCom = String.format("%s | grep %s", sCom, grep);
+        String pCom = String.format("%s | grep '%s'", sCom, grep);
 
         ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", pCom);
         pb.redirectErrorStream(true);
@@ -81,12 +81,12 @@ public class BashScript {
                     throw new Exception("Authentication failed! Aborting.");
                 }
                 else if (output.toString().contains(grep)) {
-                    System.out.println("Process Output:\n" + output.toString());
+                    System.out.println("Process Output (found it!):\n" + output.toString());
                     return true;
                 }
             }
             // log output
-            System.out.println("Process Output:\n" + output.toString());
+            System.out.println("Process Output (not found):\n" + output.toString());
 
             process.waitFor();
         } catch (IOException | InterruptedException e) {
@@ -99,7 +99,7 @@ public class BashScript {
     public static Boolean executeGrepCommand(BashCommand command, String grep) throws Exception {
         String com = String.format("%s %s %s %s %s %s ", command.getCom(),
                 command.getArg(1), command.getArg(2), command.getArg(3), command.getArg(4), command.getArg(5));
-        String pCom = String.format("%s | grep %s", com, grep);
+        String pCom = String.format("%s | grep '%s'", com, grep);
 
         ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", pCom);
         pb.redirectErrorStream(true);
@@ -122,12 +122,12 @@ public class BashScript {
                     throw new Exception("Authentication failed! Aborting.");
                 }
                 else if (output.toString().contains(grep)) {
-                    System.out.println("Process Output:\n" + output.toString());
+                    System.out.println("Process Output (found it!):\n" + output.toString());
                     return true;
                 }
             }
             // log output
-            System.out.println("Process Output:\n" + output.toString());
+            System.out.println("Process Output (not found):\n" + output.toString());
 
             process.waitFor();
         } catch (IOException | InterruptedException e) {

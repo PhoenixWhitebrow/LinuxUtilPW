@@ -28,7 +28,7 @@ public class LinuxUtilPW extends JFrame{
     Color uiGreen = new Color(0, 137, 50);
     Color uiRed = new Color(223, 21, 45);
 
-    static String version = "1.1";
+    static String version = "1.2";
     String sudoPass = "";
     String internetConnection = "";
     String wgConfig = "";
@@ -51,7 +51,7 @@ public class LinuxUtilPW extends JFrame{
         this.setIconImage(image);
 
         // initial wg status check
-        if (Wireguard.wgInitStatus()) {
+        if (Wireguard.wgInitStatus(wgConfigField.getText())) {
             wgStatus.setText("UP");
             wgStatus.setForeground(uiGreen);
         } else {
@@ -66,7 +66,7 @@ public class LinuxUtilPW extends JFrame{
 
             try {
                 Wireguard.wgUp(wgConfig, sudoPass);
-                if (Wireguard.wgStatus(sudoPass)) {
+                if (Wireguard.wgStatus(wgConfig, sudoPass)) {
                     wgStatus.setText("UP");
                     wgStatus.setForeground(uiGreen);
                 } else {
@@ -88,7 +88,7 @@ public class LinuxUtilPW extends JFrame{
 
             try {
                 Wireguard.wgDown(wgConfig,internetConnection, sudoPass);
-                if (!Wireguard.wgStatus(sudoPass)) {
+                if (!Wireguard.wgStatus(wgConfig, sudoPass)) {
                     wgStatus.setText("DOWN");
                     wgStatus.setForeground(uiRed);
                 } else {
@@ -100,6 +100,15 @@ public class LinuxUtilPW extends JFrame{
             }
         });
 
+        // initial second monitor status check
+        if (SecondMonitor.secondMonitorStatus(secMonOutField.getText(), secMonResField.getText())) {
+            secondMonStatus.setText("ON");
+            secondMonStatus.setForeground(uiGreen);
+        } else {
+            secondMonStatus.setText("OFF");
+            secondMonStatus.setForeground(uiRed);
+        }
+
         secondMonOnButton.addActionListener(e -> {
             // Получение данных из форм
             mon1out = firstMonOutField.getText();
@@ -108,8 +117,13 @@ public class LinuxUtilPW extends JFrame{
 
             try {
                 SecondMonitor.activateSecondMonitor(mon1out, mon2out, mon2res);
+            if (SecondMonitor.secondMonitorStatus(mon2out,mon2res)) {
                 secondMonStatus.setText("ON");
                 secondMonStatus.setForeground(uiGreen);
+            } else {
+                secondMonStatus.setText("OFF");
+                secondMonStatus.setForeground(uiRed);
+            }
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
@@ -123,8 +137,13 @@ public class LinuxUtilPW extends JFrame{
 
             try {
                 SecondMonitor.deactivateSecondMonitor(mon1out, mon2out, mon1res);
-                secondMonStatus.setText("OFF");
-                secondMonStatus.setForeground(uiRed);
+                if (SecondMonitor.secondMonitorStatus(mon2out,mon2res)) {
+                    secondMonStatus.setText("ON");
+                    secondMonStatus.setForeground(uiGreen);
+                } else {
+                    secondMonStatus.setText("OFF");
+                    secondMonStatus.setForeground(uiRed);
+                }
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
