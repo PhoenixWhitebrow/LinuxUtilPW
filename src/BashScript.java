@@ -95,4 +95,45 @@ public class BashScript {
 
         return false;
     }
+
+    public static Boolean executeGrepCommand(BashCommand command, String grep) throws Exception {
+        String com = String.format("%s %s %s %s %s %s ", command.getCom(),
+                command.getArg(1), command.getArg(2), command.getArg(3), command.getArg(4), command.getArg(5));
+        String pCom = String.format("%s | grep %s", com, grep);
+
+        ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", pCom);
+        pb.redirectErrorStream(true);
+
+        Process process  = pb.start();
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            pb.inheritIO();
+
+            // detect grep out
+            String line;
+            StringBuilder output = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+                if (output.toString().contains("Sorry, try again.")) {
+                    // log error
+                    System.out.println("Authentication failed: Wrong password detected.");
+                    // stop executing
+                    process.destroy();
+                    throw new Exception("Authentication failed! Aborting.");
+                }
+                else if (output.toString().contains(grep)) {
+                    System.out.println("Process Output:\n" + output.toString());
+                    return true;
+                }
+            }
+            // log output
+            System.out.println("Process Output:\n" + output.toString());
+
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 }

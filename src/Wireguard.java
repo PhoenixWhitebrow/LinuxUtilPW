@@ -21,6 +21,12 @@ public class Wireguard extends BashScript{
     public static Boolean wgStatus(String sudoPass) throws Exception {
         BashCommand wgStat = new BashCommand("wg", "show");
 
-        return executeSudoGrepCommand(wgStat,sudoPass, "interface:");
+        return executeSudoGrepCommand(wgStat, sudoPass, "interface");
+    }
+
+    public static Boolean wgInitStatus() throws Exception {
+        BashCommand wgStat = new BashCommand("wg", "show");
+
+        return executeGrepCommand(wgStat, "interface");
     }
 }

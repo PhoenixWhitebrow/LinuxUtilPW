@@ -28,7 +28,7 @@ public class LinuxUtilPW extends JFrame{
     Color uiGreen = new Color(0, 137, 50);
     Color uiRed = new Color(223, 21, 45);
 
-    static String version = "1.0";
+    static String version = "1.1";
     String sudoPass = "";
     String internetConnection = "";
     String wgConfig = "";
@@ -38,7 +38,7 @@ public class LinuxUtilPW extends JFrame{
     String mon2res = "";
 
 
-    public LinuxUtilPW(String title) {
+    public LinuxUtilPW(String title) throws Exception {
 
         super(title);
 
@@ -49,6 +49,15 @@ public class LinuxUtilPW extends JFrame{
         // Замена стандартной иконки
         Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("icon.png"));
         this.setIconImage(image);
+
+        // initial wg status check
+        if (Wireguard.wgInitStatus()) {
+            wgStatus.setText("UP");
+            wgStatus.setForeground(uiGreen);
+        } else {
+            wgStatus.setText("DOWN");
+            wgStatus.setForeground(uiRed);
+        }
 
         wgUpButton.addActionListener(e -> {
             // Получение данных из форм
@@ -153,7 +162,7 @@ public class LinuxUtilPW extends JFrame{
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         setTheme();
         JFrame frame = new LinuxUtilPW("Phoenix's Linux Util v" + version);
         frame.setVisible(true);
