@@ -46,6 +46,10 @@ public class LinuxUtilPW extends JFrame{
         this.setContentPane(mainPanel);
         this.pack();
 
+        // Замена стандартной иконки
+        Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("icon.png"));
+        this.setIconImage(image);
+
         wgUpButton.addActionListener(e -> {
             // Получение данных из форм
             wgConfig = wgConfigField.getText();
