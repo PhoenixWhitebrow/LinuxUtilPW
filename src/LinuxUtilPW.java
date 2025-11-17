@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class LinuxUtilPW extends JFrame{
     private JPanel mainPanel;
@@ -27,8 +28,7 @@ public class LinuxUtilPW extends JFrame{
     private JLabel secondMonStatus;
     private JButton btConnectButton;
     private JLabel btConnectLabel;
-    private JTextField btMacField;
-    private JLabel btMacLabel;
+    private JComboBox btDevField;
     private JLabel btConnectStatus;
     private JButton obsOffButton;
     private JButton obsOnButton;
@@ -37,11 +37,13 @@ public class LinuxUtilPW extends JFrame{
     private JButton testButton;
     private JTextField obsPortField;
     private JPasswordField obsPassField;
+    private JLabel obsPortLabel;
+    private JLabel obsPassLabel;
 
     Color uiGreen = new Color(0, 137, 50);
     Color uiRed = new Color(223, 21, 45);
 
-    static String version = "1.4.1";
+    static String version = "1.5";
     String sudoPass = "";
     String internetConnection = "";
     String wgConfig = "";
@@ -49,7 +51,6 @@ public class LinuxUtilPW extends JFrame{
     String mon2out = "";
     String mon1res = "";
     String mon2res = "";
-    String btMac = "";
     String obsPass = "";
     Integer obsPort = 0;
 
@@ -165,12 +166,21 @@ public class LinuxUtilPW extends JFrame{
             }
         });
 
+        ArrayList<BTDevice> dev = Bluetooth.getBluetoothDevices();
+        DefaultComboBoxModel<BTDevice> device = new DefaultComboBoxModel();
+
+        for (int i = 0; i < dev.size(); i++) {
+            device.addElement(dev.get(i));
+        }
+        btDevField.setModel(device);
+        btDevField.setRenderer(new MyBTDeviceRenderer());
+
         btConnectButton.addActionListener(e -> {
-            // retrieving data from forms
-            btMac = btMacField.getText();
+            // retrieving data from form
+            BTDevice btd = (BTDevice) btDevField.getSelectedItem();
 
             try {
-                if (Bluetooth.connectBtDevice(btMac) == true) {
+                if (Bluetooth.connectBtDevice(btd) == true) {
                     btConnectStatus.setText("OK");
                     btConnectStatus.setForeground(uiGreen);
                 } else {
@@ -235,8 +245,11 @@ public class LinuxUtilPW extends JFrame{
         });
 
         testButton.addActionListener(e -> {
-            boolean checkD = Desktop.isDesktopSupported();
-            System.out.println("Desktop is supported: " + checkD);
+            try {
+                Bluetooth.getBluetoothDevices();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         });
     }
 

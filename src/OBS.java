@@ -8,22 +8,22 @@ public class OBS extends BashScript {
                 "--websocket", String.format("obsws://localhost:%s/%s", obsPort, obsPass),
                 "virtual-camera", "start");
 
-        BashScript.executeSudoCommand(enableCam, sudoPass);
-        BashScript.executeCommand(startObs);
+        executeSudoCommand(enableCam, sudoPass);
+        executeCommand(startObs);
         Thread.sleep(4000);
-        BashScript.executeCommand(virtualCamStart);
+        executeCommand(virtualCamStart);
     }
 
     public static void disableVirtualCamera(String sudoPass) throws Exception {
         BashCommand virtualCamStop = new BashCommand("modprobe", "-r", "v4l2loopback");
 
-        BashScript.executeSudoCommand(virtualCamStop, sudoPass);
+        executeSudoCommand(virtualCamStop, sudoPass);
     }
 
     public static boolean virialCamStatus() throws Exception {
         BashCommand checkModule = new BashCommand("lsmod");
         String grep = "v4l2loopback";
 
-        return BashScript.executeGrepCommand(checkModule, grep);
+        return executeGrepCommand(checkModule, grep);
     }
 }

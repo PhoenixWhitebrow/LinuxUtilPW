@@ -293,7 +293,7 @@
           <hideActionText value="false"/>
           <opaque value="true"/>
           <text value="test"/>
-          <visible value="false"/>
+          <visible value="true"/>
         </properties>
       </component>
       <component id="c35eb" class="javax.swing.JTextField" binding="obsPortField">
@@ -337,7 +337,7 @@
           <text value="spTcRg2KzZPAiqGS"/>
         </properties>
       </component>
-      <component id="35fef" class="javax.swing.JLabel">
+      <component id="35fef" class="javax.swing.JLabel" binding="obsPortLabel">
         <constraints>
           <grid row="3" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
@@ -346,7 +346,7 @@
           <text value="WS Server Port"/>
         </properties>
       </component>
-      <component id="529c2" class="javax.swing.JLabel">
+      <component id="529c2" class="javax.swing.JLabel" binding="obsPassLabel">
         <constraints>
           <grid row="4" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
@@ -383,26 +383,14 @@
           <text value="Connect BT Device"/>
         </properties>
       </component>
-      <component id="fd810" class="javax.swing.JTextField" binding="btMacField">
+      <component id="a93c7" class="javax.swing.JComboBox" binding="btDevField">
         <constraints>
-          <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="4" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
-        <properties>
-          <horizontalAlignment value="0"/>
-          <text value="E8:EE:CC:A9:22:B5"/>
-        </properties>
-      </component>
-      <component id="6649d" class="javax.swing.JLabel" binding="btMacLabel">
-        <constraints>
-          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
-        </constraints>
-        <properties>
-          <text value="Device MAC"/>
-        </properties>
+        <properties/>
       </component>
       <component id="13fb2" class="javax.swing.JLabel" binding="btConnectLabel">
         <constraints>

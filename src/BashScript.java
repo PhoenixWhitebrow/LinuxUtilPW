@@ -1,6 +1,7 @@
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class BashScript {
@@ -12,10 +13,19 @@ public class BashScript {
 
         ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", com);
 
-        try {
+        Process process = pb.start();
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             pb.inheritIO();
-            Process process = null;
-            process = pb.start();
+
+            // log output
+            String line;
+            StringBuilder output = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+            System.out.println("Process Output:\n" + output);
+
             process.waitFor();
         } catch (IOException | InterruptedException ex) {
             throw new RuntimeException(ex);
@@ -23,11 +33,12 @@ public class BashScript {
     }
 
     public static void executeSudoCommand(BashCommand command, String sudoPass) throws Exception {
+
         String com = String.format("%s %s %s %s %s %s ", command.getCom(),
                 command.getArg(1), command.getArg(2), command.getArg(3), command.getArg(4), command.getArg(5));
-        String sCom = String.format("PASWD='%s' && echo $PASWD | sudo -S %s", sudoPass, com);
+        String sudoCom = String.format("PASWD='%s' && echo $PASWD | sudo -S %s", sudoPass, com);
 
-        ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", sCom);
+        ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", sudoCom);
         pb.redirectErrorStream(true);
 
         // initiate script execution
@@ -50,7 +61,7 @@ public class BashScript {
                 }
             }
             // log output
-            System.out.println("Process Output:\n" + output.toString());
+            System.out.println("Process Output:\n" + output);
 
             process.waitFor();
         } catch (IOException | InterruptedException e) {
@@ -59,12 +70,13 @@ public class BashScript {
     }
 
     public static Boolean executeSudoGrepCommand(BashCommand command, String sudoPass, String grep) throws Exception {
+
         String com = String.format("%s %s %s %s %s %s ", command.getCom(),
                 command.getArg(1), command.getArg(2), command.getArg(3), command.getArg(4), command.getArg(5));
-        String sCom = String.format("PASWD='%s' && echo $PASWD | sudo -S %s", sudoPass, com);;
-        String pCom = String.format("%s | grep '%s'", sCom, grep);
+        String sudoCom = String.format("PASWD='%s' && echo $PASWD | sudo -S %s", sudoPass, com);;
+        String pipeCom = String.format("%s | grep '%s'", sudoCom, grep);
 
-        ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", pCom);
+        ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", pipeCom);
         pb.redirectErrorStream(true);
 
         Process process  = pb.start();
@@ -85,12 +97,12 @@ public class BashScript {
                     throw new Exception("Authentication failed! Aborting.");
                 }
                 else if (output.toString().contains(grep)) {
-                    System.out.println("Expected value found. Process Output:\n" + output.toString());
+                    System.out.println("Expected value found. Process Output:\n" + output);
                     return true;
                 }
             }
             // log output
-            System.out.println("Expected value not found. Process Output:\n" + output.toString());
+            System.out.println("Expected value not found. Process Output:\n" + output);
 
             process.waitFor();
         } catch (IOException | InterruptedException e) {
@@ -101,11 +113,12 @@ public class BashScript {
     }
 
     public static Boolean executeGrepCommand(BashCommand command, String grep) throws Exception {
+
         String com = String.format("%s %s %s %s %s %s ", command.getCom(),
                 command.getArg(1), command.getArg(2), command.getArg(3), command.getArg(4), command.getArg(5));
-        String pCom = String.format("%s | grep '%s'", com, grep);
+        String pipeCom = String.format("%s | grep '%s'", com, grep);
 
-        ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", pCom);
+        ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", pipeCom);
         pb.redirectErrorStream(true);
 
         // initiate script execution
@@ -121,11 +134,11 @@ public class BashScript {
             while ((line = reader.readLine()) != null) {
                 output.append(line).append("\n");
                 if (output.toString().contains(grep)) {
-                    System.out.println("Expected value found. Process Output:\n" + output.toString());
+                    System.out.println("Expected value found. Process Output:\n" + output);
                     return true;
                 } else {
                     // log output
-                    System.out.println("Expected value not found. Process Output:\n" + output.toString());
+                    System.out.println("Expected value not found. Process Output:\n" + output);
                     return false;
                 }
             }
@@ -136,6 +149,7 @@ public class BashScript {
     }
 
     public static boolean executeExpectScript(String script, String arg) throws IOException, InterruptedException {
+
         InputStream in = BashScript.class.getClassLoader().getResourceAsStream(script);
         File tempScript = File.createTempFile("expect_script_", ".exp");
         Files.copy(in, tempScript.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -157,13 +171,12 @@ public class BashScript {
             
             String line;
             StringBuilder output = new StringBuilder();
-
             long timeout = System.currentTimeMillis() + 2; // Wait 2 seconds to write logs
             while ((line = reader.readLine()) != null && System.currentTimeMillis() < timeout) {
                 output.append(line).append("\n");
             }
             // log output
-            System.out.println("Process Output:\n" + output.toString());
+            System.out.println("Process Output:\n" + output);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -173,5 +186,29 @@ public class BashScript {
         tempScript.delete(); // Clean up the temporary file
 
         return result;
+    }
+
+    public static String[] executeListCommand(BashCommand command) throws Exception {
+        String com = String.format("%s %s %s %s %s %s ", command.getCom(),
+                command.getArg(1), command.getArg(2), command.getArg(3), command.getArg(4), command.getArg(5));
+
+        ProcessBuilder pb = new ProcessBuilder("/bin/sh", "-c", com);
+
+        // initiate script execution
+        Process p = pb.start();
+
+        // read the output
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+            pb.inheritIO();
+
+            String line;
+            StringBuilder output = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+            String outputStr = output.toString();
+            String[] list = outputStr.split("\n");
+            return list;
+        }
     }
 }
