@@ -293,7 +293,7 @@
           <hideActionText value="false"/>
           <opaque value="true"/>
           <text value="test"/>
-          <visible value="true"/>
+          <visible value="false"/>
         </properties>
       </component>
       <component id="c35eb" class="javax.swing.JTextField" binding="obsPortField">
