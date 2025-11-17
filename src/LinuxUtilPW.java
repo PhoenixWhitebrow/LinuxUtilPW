@@ -34,11 +34,14 @@ public class LinuxUtilPW extends JFrame{
     private JButton obsOnButton;
     private JLabel obsLabel;
     private JLabel obsStatus;
+    private JButton testButton;
+    private JTextField obsPortField;
+    private JPasswordField obsPassField;
 
     Color uiGreen = new Color(0, 137, 50);
     Color uiRed = new Color(223, 21, 45);
 
-    static String version = "1.4";
+    static String version = "1.4.1";
     String sudoPass = "";
     String internetConnection = "";
     String wgConfig = "";
@@ -47,6 +50,8 @@ public class LinuxUtilPW extends JFrame{
     String mon1res = "";
     String mon2res = "";
     String btMac = "";
+    String obsPass = "";
+    Integer obsPort = 0;
 
 
     public LinuxUtilPW(String title) throws Exception {
@@ -189,10 +194,13 @@ public class LinuxUtilPW extends JFrame{
         }
 
         obsOnButton.addActionListener(e -> {
+            // retrieving data from forms
             sudoPass = sudoPassField.getText();
+            obsPort = Integer.valueOf(obsPortField.getText());
+            obsPass = obsPassField.getText();
 
             try {
-                OBS.enableVirtualCamDevice(sudoPass);
+                OBS.enableVirtualCamDevice(sudoPass, obsPort, obsPass);
                 if (OBS.virialCamStatus()) {
                     obsStatus.setText("UP");
                     obsStatus.setForeground(uiGreen);
@@ -224,6 +232,11 @@ public class LinuxUtilPW extends JFrame{
                 obsStatus.setForeground(uiRed);
                 throw new RuntimeException(ex);
             }
+        });
+
+        testButton.addActionListener(e -> {
+            boolean checkD = Desktop.isDesktopSupported();
+            System.out.println("Desktop is supported: " + checkD);
         });
     }
 

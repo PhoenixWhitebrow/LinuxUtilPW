@@ -1,11 +1,11 @@
 public class OBS extends BashScript {
 
-    public static void enableVirtualCamDevice(String sudoPass) throws Exception {
+    public static void enableVirtualCamDevice(String sudoPass, Integer obsPort, String obsPass) throws Exception {
         BashCommand enableCam = new BashCommand("modprobe",
                 "v4l2loopback", "exclusive_caps=1", "card_label='OBS Virtual Webcam'");
         BashCommand startObs = new BashCommand("obs", "&>", "/dev/null", "&");
         BashCommand virtualCamStart = new BashCommand("obs-cmd",
-                "--websocket", "obsws://localhost:4455/spTcRg2KzZPAiqGS",
+                "--websocket", String.format("obsws://localhost:%s/%s", obsPort, obsPass),
                 "virtual-camera", "start");
 
         BashScript.executeSudoCommand(enableCam, sudoPass);
